@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=IPTV
+Comment=Watch IPTV channels
+Comment[es]=Ver canales de IPTV
+Exec=dtk-iptv
+Icon=dtk-iptv
+Categories=AudioVideo;Video;Player;TV;
+Terminal=false

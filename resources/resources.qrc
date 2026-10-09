@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>dtk-iptv.svg</file>
+    </qresource>
+</RCC>
