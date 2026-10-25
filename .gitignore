@@ -6,3 +6,9 @@ debian/files
 debian/*.substvars
 debian/*.debhelper.log
 debian/debhelper-build-stamp
+dist/
+*.deb
+debs/
+linglong/
+*.uab
+*.layer
