@@ -1,0 +1,13 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: dtk-iptv
+Comment:
+ This package is only a player. It contains no channels, streams or playlists.
+ The default playlist catalogue is downloaded at run time from the iptv-org
+ project (https://github.com/iptv-org/iptv) and is subject to that project's
+ license and terms.
+
+Files: *
+Copyright: 2026 alvarosamudio <alvarosamudio@criptext.com>
+License: TODO
+ The author has not chosen a license for this software yet. Replace this
+ paragraph with the chosen license before distributing the package.

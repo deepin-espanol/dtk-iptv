@@ -1,0 +1,31 @@
+Source: dtk-iptv
+Section: video
+Priority: optional
+Maintainer: alvarosamudio <alvarosamudio@criptext.com>
+Build-Depends: debhelper-compat (= 13),
+               cmake,
+               ninja-build,
+               qt6-base-dev,
+               qt6-multimedia-dev,
+               libdtk6core-dev,
+               libdtk6gui-dev,
+               libdtk6widget-dev
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+
+Package: dtk-iptv
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+         libqt6svg6,
+         ffmpeg
+Description: IPTV player for deepin built with Qt 6 and DTK 6
+ Plays IPTV channels from M3U/M3U8 playlists. It only plays streams: it does
+ not host, bundle or distribute any channel or playlist.
+ .
+ The public playlist catalogue of the iptv-org project is downloaded on first
+ start, and the user can add their own playlists by URL or from a local file.
+ .
+ Features: favourites, channel search, channel up/down like a TV, a scanner
+ that finds which channels work and can hide the rest, and software or
+ hardware decoding.
