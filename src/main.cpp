@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 
+#include <DAboutDialog>
 #include <DApplication>
 
 #include <QIcon>
@@ -26,9 +27,23 @@ int main(int argc, char *argv[])
     const QIcon icon(QStringLiteral(":/dtk-iptv.svg"));
     app.setProductIcon(icon);
     app.setWindowIcon(icon);
-    app.setApplicationDescription(QStringLiteral(
-        "Reproductor de IPTV. Incluye por defecto las listas públicas de iptv-org "
-        "y permite agregar listas M3U propias."));
+
+    DAboutDialog about;
+    app.setAboutDialog(&about);
+    about.setWindowTitle(QStringLiteral("IPTV"));
+    about.setProductName(QStringLiteral("<span>IPTV</span>"));
+    about.setProductIcon(icon);
+    about.setVersion(DApplication::buildVersion(QStringLiteral(APP_VERSION)));
+    about.setDescription(QStringLiteral(
+        "<div style='text-align:center;'><img src=':/icons/Logo-Racoon.png' width='128'/></div>"
+        "<span style='font-size:8pt; font-weight:600;'>Deepin en Español </span>"
+        "<a href='https://deepinenespanol.org'>https://deepinenespanol.org</a><br/>"
+        "<span style='font-size:8pt; font-weight:600;'>Deepin Latin Code - developers</span>"
+        "<br/><br/>"
+        "<span style='font-size:7pt;'>Esta aplicación es solo un reproductor: no aloja ni distribuye "
+        "canales. Las listas por defecto provienen de iptv-org y obedecen a su licencia.</span>"));
+    about.setWebsiteName(QStringLiteral("deepinenespanol.org"));
+    about.setWebsiteLink(QStringLiteral("https://deepinenespanol.org"));
     app.loadTranslator();
 
     MainWindow w;

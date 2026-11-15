@@ -1,3 +1,9 @@
+dtk-iptv (1.0.1) unstable; urgency=medium
+
+  * Branding Deepin en Español y dialogo Acerca de.
+
+ -- alvarosamudio <alvarosamudio@protonmail.com>  Sun, 15 Nov 2026 16:50:15 -0500
+
 dtk-iptv (1.0.0) unstable; urgency=medium
 
   * Initial release.

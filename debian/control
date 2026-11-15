@@ -1,7 +1,7 @@
 Source: dtk-iptv
 Section: video
 Priority: optional
-Maintainer: alvarosamudio <alvarosamudio@criptext.com>
+Maintainer: alvarosamudio <alvarosamudio@protonmail.com>
 Build-Depends: debhelper-compat (= 13),
                cmake,
                ninja-build,
@@ -12,6 +12,7 @@ Build-Depends: debhelper-compat (= 13),
                libdtk6widget-dev
 Standards-Version: 4.7.0
 Rules-Requires-Root: no
+Homepage: https://deepinenespanol.org
 
 Package: dtk-iptv
 Architecture: any

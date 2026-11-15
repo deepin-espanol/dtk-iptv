@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>dtk-iptv.svg</file>
+        <file>icons/Logo-Racoon.png</file>
     </qresource>
 </RCC>

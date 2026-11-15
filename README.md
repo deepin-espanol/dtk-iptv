@@ -1,5 +1,9 @@
 # IPTV
 
+<p align="center"><a href="https://deepinenespanol.org"><img src="resources/icons/Logo-Racoon.png" alt="Deepin en Español" width="284"/></a></p>
+
+<p align="center">Un proyecto de <a href="https://deepinenespanol.org">Deepin en Español</a> · Deepin Latin Code - developers</p>
+
 Reproductor de IPTV nativo para deepin, escrito en C++ con Qt 6 y DTK 6.
 
 - Usa por defecto el catálogo de [iptv-org](https://github.com/iptv-org/iptv/blob/master/PLAYLISTS.md)
