@@ -80,7 +80,7 @@ void splitHeaderSuffix(Channel &ch)
 
 } // namespace
 
-ChannelList M3uParser::parse(const QByteArray &data)
+ChannelList M3uParser::parse(const QByteArray &data, const std::function<bool(const QString &)> &skip)
 {
     ChannelList result;
     Channel pending;
@@ -111,6 +111,11 @@ ChannelList M3uParser::parse(const QByteArray &data)
         } else {
             pending.url = line;
             splitHeaderSuffix(pending);
+            if (skip && skip(pending.url)) {
+                pending = Channel();
+                hasInfo = false;
+                continue;
+            }
             if (!hasInfo || pending.name.isEmpty())
                 pending.name = line.section(QLatin1Char('/'), -1);
             result.append(pending);

@@ -4,6 +4,7 @@
 #include "channelscanner.h"
 #include "m3uparser.h"
 #include "settingsdialog.h"
+#include "streamrelay.h"
 #include "videowidget.h"
 
 #include <DDialog>
@@ -693,6 +694,15 @@ void MainWindow::refreshCatalog(bool notifyUser)
 // Channels
 // ---------------------------------------------------------------------------
 
+// YouTube links can only be played with yt-dlp; without it they would only
+// ever show up as broken channels.
+static ChannelList parsePlaylist(const QByteArray &data)
+{
+    if (StreamRelay::youtubeAvailable())
+        return M3uParser::parse(data);
+    return M3uParser::parse(data, &StreamRelay::isYouTube);
+}
+
 void MainWindow::loadPlaylist(const QString &url)
 {
     if (m_listReply) {
@@ -718,7 +728,7 @@ void MainWindow::loadPlaylist(const QString &url)
             notify(QStringLiteral("No se pudo abrir %1: %2").arg(file.fileName(), file.errorString()), true);
             return;
         }
-        setChannels(M3uParser::parse(file.readAll()));
+        setChannels(parsePlaylist(file.readAll()));
         return;
     }
 
@@ -736,7 +746,7 @@ void MainWindow::loadPlaylist(const QString &url)
             notify(QStringLiteral("No se pudo cargar la lista: %1").arg(reply->errorString()), true);
             return;
         }
-        setChannels(M3uParser::parse(reply->readAll()));
+        setChannels(parsePlaylist(reply->readAll()));
     });
 }
 

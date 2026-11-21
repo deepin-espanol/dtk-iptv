@@ -78,6 +78,12 @@ void ChannelScanner::launchNext()
 
 void ChannelScanner::probe(const Channel &channel, bool lenientHls)
 {
+    const bool youtube = StreamRelay::isYouTube(channel.url);
+    if (youtube && !StreamRelay::youtubeAvailable()) {
+        completeOne(); // can't be checked: leave its status untouched
+        return;
+    }
+
     QStringList args{QStringLiteral("-v"), QStringLiteral("error")};
     if (channel.url.startsWith(QLatin1String("http"), Qt::CaseInsensitive)) {
         args << QStringLiteral("-user_agent")
@@ -99,6 +105,10 @@ void ChannelScanner::probe(const Channel &channel, bool lenientHls)
 
     const int generation = m_generation;
 
+    // For YouTube, getting a stream URL out of yt-dlp counts as working.
+    if (youtube)
+        args = StreamRelay::ytdlpArgs(channel.url);
+
     connect(process, &QProcess::finished, this,
             [this, process, channel, lenientHls, generation](int exitCode, QProcess::ExitStatus status) {
                 const QByteArray out = process->readAllStandardOutput();
@@ -107,7 +117,7 @@ void ChannelScanner::probe(const Channel &channel, bool lenientHls)
                 if (generation != m_generation)
                     return;
                 // The HLS-only option makes ffprobe reject other formats.
-                if (lenientHls && err.contains("Option not found")) {
+                if (lenientHls && err.contains("Option not found") && !StreamRelay::isYouTube(channel.url)) {
                     probe(channel, false);
                     return;
                 }
@@ -124,7 +134,7 @@ void ChannelScanner::probe(const Channel &channel, bool lenientHls)
             completeOne(); // could not test it: leave its status untouched
     });
 
-    process->start(ffprobePath(), args);
+    process->start(youtube ? StreamRelay::ytdlpPath() : ffprobePath(), args);
 }
 
 void ChannelScanner::completeOne()

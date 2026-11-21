@@ -19,7 +19,8 @@ Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
          libqt6svg6,
-         ffmpeg
+         ffmpeg,
+         yt-dlp
 Description: IPTV player for deepin built with Qt 6 and DTK 6
  Plays IPTV channels from M3U/M3U8 playlists. It only plays streams: it does
  not host, bundle or distribute any channel or playlist.

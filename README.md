@@ -9,6 +9,8 @@ Reproductor de IPTV nativo para deepin, escrito en C++ con Qt 6 y DTK 6.
 - Usa por defecto el catálogo de [iptv-org](https://github.com/iptv-org/iptv/blob/master/PLAYLISTS.md)
   (categorías, idiomas, países y regiones). La app no incluye ninguna lista: descarga
   `PLAYLISTS.md` de GitHub en el primer arranque, lo guarda en caché y lo actualiza en cada inicio.
+- Reproduce también enlaces de YouTube (directos y vídeos) que aparezcan en las listas, usando
+  [yt-dlp](https://github.com/yt-dlp/yt-dlp). Sin yt-dlp esos enlaces se ocultan.
 - Permite agregar listas M3U/M3U8 propias (URL o archivo local) desde **Agregar lista**.
 - La decodificación es por software por defecto; la de hardware se activa en el menú.
 - Cambio de canal como en una tele: botones anterior/siguiente o las teclas Av Pág / Re Pág.
@@ -40,6 +42,9 @@ Dependencias: Qt 6 (Widgets, Network, Multimedia con backend FFmpeg) y DTK 6 (`l
 En ejecución se recomienda tener `ffmpeg` instalado (incluye `ffprobe`): la app lo usa para conectar
 con los canales (cabeceras `User-Agent`/`Referer`, reintentos y mensajes de error claros) y para el
 escáner. Sin él reproduce directamente y el escáner queda desactivado.
+Para YouTube hace falta además `yt-dlp`, y **actualizado**: YouTube cambia a menudo y las versiones
+antiguas de las distribuciones dejan de funcionar. La más reciente se instala con
+`pipx install yt-dlp` (o descargando el ejecutable de su página de GitHub a `~/.local/bin`).
 
 ```sh
 cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release

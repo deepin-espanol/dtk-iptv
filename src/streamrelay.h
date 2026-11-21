@@ -23,6 +23,12 @@ public:
     ~StreamRelay() override;
 
     static bool available();
+    // YouTube pages are turned into a stream URL with yt-dlp first.
+    static bool isYouTube(const QString &url);
+    static bool youtubeAvailable();
+    static QString ytdlpPath();
+    // Arguments that make yt-dlp print the stream URL(s): one combined, or video then audio.
+    static QStringList ytdlpArgs(const QString &url);
     static QString defaultUserAgent(); // browser-like; many servers reject ffmpeg's own
 
     void start(const QString &url, const QString &userAgent, const QString &referrer);
@@ -33,16 +39,20 @@ signals:
     void failed(const QString &reason);
 
 private:
+    void resolveYouTube();
     void launch(bool lenientHls);
+    static void killProcess(QPointer<QProcess> &process);
     void acceptClient();
     void flush();
 
     QTcpServer m_server;
     QPointer<QProcess> m_process;
+    QPointer<QProcess> m_resolver; // yt-dlp, for YouTube links
     QPointer<QTcpSocket> m_client;
     QTimer m_timeout;
     QByteArray m_buffer;
     QString m_url;
+    QString m_audioUrl; // separate audio stream, when the source splits them
     QString m_userAgent;
     QString m_referrer;
     int m_session = 0;
