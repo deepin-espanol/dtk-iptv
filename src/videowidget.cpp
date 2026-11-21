@@ -43,6 +43,9 @@ VideoWidget::VideoWidget(QWidget *parent)
         case QMediaPlayer::BufferedMedia:
         case QMediaPlayer::LoadedMedia:
             setOverlay(QString());
+            // Radio and other audio-only streams never deliver a frame.
+            if (!m_player->hasVideo())
+                setTuning(false);
             break;
         case QMediaPlayer::EndOfMedia:
             m_frame = QVideoFrame();
