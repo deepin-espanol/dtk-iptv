@@ -1,5 +1,7 @@
 #include "settingsdialog.h"
 
+#include "extrasources.h"
+
 #include <DSwitchButton>
 
 #include <QColorDialog>
@@ -50,6 +52,7 @@ SettingsDialog::SettingsDialog(const Values &values, QWidget *parent)
     : DDialog(parent)
     , m_color(values.tuningColor)
     , m_scannerAvailable(values.scannerAvailable)
+    , m_disabledSources(values.disabledSources)
 {
     setTitle(QStringLiteral("Ajustes"));
     setIcon(windowIcon());
@@ -89,6 +92,24 @@ SettingsDialog::SettingsDialog(const Values &values, QWidget *parent)
     layout->addLayout(row(QStringLiteral("Catálogo de iptv-org"), catalogButton, content));
     m_catalogStatus = hint(QStringLiteral("Se actualiza solo cada vez que se abre la aplicación."), content);
     layout->addWidget(m_catalogStatus);
+
+    layout->addWidget(new QLabel(QStringLiteral("Otras fuentes gratuitas"), content));
+    for (const ExtraSource &source : ExtraSources::all()) {
+        const QString id = QString::fromLatin1(source.id);
+        auto *sourceSwitch = new DSwitchButton(content);
+        sourceSwitch->setChecked(!m_disabledSources.contains(id));
+        sourceSwitch->setToolTip(QString::fromUtf8(source.description));
+        auto *sourceRow = row(QString::fromUtf8(source.title), sourceSwitch, content);
+        sourceRow->setContentsMargins(12, 0, 0, 0);
+        layout->addLayout(sourceRow);
+        connect(sourceSwitch, &DSwitchButton::checkedChanged, this, [this, id](bool on) {
+            if (on)
+                m_disabledSources.removeAll(id);
+            else if (!m_disabledSources.contains(id))
+                m_disabledSources.append(id);
+            emit disabledSourcesChanged(m_disabledSources);
+        });
+    }
 
     layout->addWidget(new QLabel(QStringLiteral("Mis listas"), content));
     m_lists = new QListWidget(content);

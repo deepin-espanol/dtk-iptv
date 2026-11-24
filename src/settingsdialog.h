@@ -5,6 +5,7 @@
 #include <DDialog>
 
 #include <QColor>
+#include <QStringList>
 
 class QComboBox;
 class QLabel;
@@ -29,6 +30,7 @@ public:
         bool hardwareDecoding = false;
         bool hideBadChannels = false;
         bool scannerAvailable = true;
+        QStringList disabledSources; // ids from ExtraSources
     };
 
     explicit SettingsDialog(const Values &values, QWidget *parent = nullptr);
@@ -47,6 +49,7 @@ signals:
     void scanToggled(); // start, or stop when one is running
     void hideBadChannelsChanged(bool hide);
     void clearResultsRequested();
+    void disabledSourcesChanged(const QStringList &disabled);
 
 private:
     void updateColorButton();
@@ -62,4 +65,5 @@ private:
     QPushButton *m_scanButton;
     QPushButton *m_clearButton;
     bool m_scannerAvailable;
+    QStringList m_disabledSources;
 };

@@ -14,6 +14,7 @@ find_package(Dtk6 REQUIRED COMPONENTS Core Gui Widget)
 add_executable(dtk-iptv
     src/main.cpp
     src/channel.h
+    src/extrasources.h
     src/m3uparser.h src/m3uparser.cpp
     src/catalog.h src/catalog.cpp
     src/playliststore.h src/playliststore.cpp

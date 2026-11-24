@@ -2,6 +2,7 @@
 
 #include "channelmodel.h"
 #include "channelscanner.h"
+#include "extrasources.h"
 #include "m3uparser.h"
 #include "settingsdialog.h"
 #include "streamrelay.h"
@@ -464,6 +465,21 @@ void MainWindow::rebuildTree()
         mine->appendRow(item);
     }
 
+    const QStringList disabledSources = m_settings.value(QStringLiteral("disabledSources")).toStringList();
+    QStandardItem *others = makeItem(QStringLiteral("Otras fuentes"));
+    others->setIcon(QIcon::fromTheme(QStringLiteral("folder")));
+    for (const ExtraSource &source : ExtraSources::all()) {
+        if (disabledSources.contains(QLatin1String(source.id)))
+            continue;
+        QStandardItem *item = makeItem(QString::fromUtf8(source.title), QString::fromLatin1(source.url));
+        item->setToolTip(QString::fromUtf8(source.description));
+        others->appendRow(item);
+    }
+    if (others->rowCount() > 0)
+        root->appendRow(others);
+    else
+        delete others;
+
     if (m_catalog.isEmpty()) {
         QStandardItem *pending = makeItem(m_catalogFailed ? QStringLiteral("Catálogo de iptv-org no disponible")
                                                           : QStringLiteral("Descargando catálogo de iptv-org…"));
@@ -838,6 +854,7 @@ void MainWindow::openSettings()
     values.hardwareDecoding = m_settings.value(QStringLiteral("hardwareDecoding"), false).toBool();
     values.hideBadChannels = m_settings.value(QStringLiteral("hideBadChannels"), false).toBool();
     values.scannerAvailable = ChannelScanner::available();
+    values.disabledSources = m_settings.value(QStringLiteral("disabledSources")).toStringList();
 
     SettingsDialog dialog(values, this);
     dialog.setUserLists(m_store.userLists());
@@ -869,6 +886,17 @@ void MainWindow::openSettings()
         } else {
             m_scanGood = m_scanBad = 0;
             m_scanner->start(m_channels->channels());
+        }
+    });
+    connect(&dialog, &SettingsDialog::disabledSourcesChanged, this, [this](const QStringList &disabled) {
+        m_settings.setValue(QStringLiteral("disabledSources"), disabled);
+        const QString current = m_currentList;
+        rebuildTree();
+        if (findListItem(current)) {
+            selectList(current);
+        } else {
+            m_currentList.clear();
+            selectDefaultList();
         }
     });
     connect(&dialog, &SettingsDialog::hideBadChannelsChanged, this, [this](bool hide) {

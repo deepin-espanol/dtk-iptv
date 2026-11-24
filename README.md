@@ -9,6 +9,10 @@ Reproductor de IPTV nativo para deepin, escrito en C++ con Qt 6 y DTK 6.
 - Usa por defecto el catálogo de [iptv-org](https://github.com/iptv-org/iptv/blob/master/PLAYLISTS.md)
   (categorías, idiomas, países y regiones). La app no incluye ninguna lista: descarga
   `PLAYLISTS.md` de GitHub en el primer arranque, lo guarda en caché y lo actualiza en cada inicio.
+- Incluye además otras fuentes gratuitas y legales, que se pueden activar o desactivar en Ajustes:
+  [Free-TV](https://github.com/Free-TV/IPTV) (internacional) y
+  [TDTChannels](https://github.com/LaQuay/TDTChannels) (televisión y radio de España).
+  Tampoco van incluidas en la app: se descargan al abrirlas.
 - Reproduce también enlaces de YouTube (directos y vídeos) que aparezcan en las listas, usando
   [yt-dlp](https://github.com/yt-dlp/yt-dlp). Sin yt-dlp esos enlaces se ocultan.
 - Permite agregar listas M3U/M3U8 propias (URL o archivo local) desde **Agregar lista**.
@@ -33,6 +37,9 @@ Los canales y listas que aparecen por defecto provienen del proyecto
 Son enlaces a emisiones públicas recopilados por esa comunidad; su contenido, disponibilidad
 y derechos corresponden a cada emisora. Cualquier reclamación sobre un canal debe dirigirse
 a iptv-org o a la emisora correspondiente.
+
+Lo mismo aplica a las otras fuentes (Free-TV y TDTChannels): sus canales obedecen a las licencias
+y condiciones de esos proyectos.
 
 Las listas que agregue el usuario son responsabilidad suya.
 
