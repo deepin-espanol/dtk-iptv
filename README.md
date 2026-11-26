@@ -13,6 +13,8 @@ Reproductor de IPTV nativo para deepin, escrito en C++ con Qt 6 y DTK 6.
   [Free-TV](https://github.com/Free-TV/IPTV) (internacional) y
   [TDTChannels](https://github.com/LaQuay/TDTChannels) (televisión y radio de España).
   Tampoco van incluidas en la app: se descargan al abrirlas.
+- Todas las fuentes son opcionales, iptv-org incluida: se activan o desactivan en Ajustes, y las
+  desactivadas no se descargan ni aparecen en el panel.
 - Reproduce también enlaces de YouTube (directos y vídeos) que aparezcan en las listas, usando
   [yt-dlp](https://github.com/yt-dlp/yt-dlp). Sin yt-dlp esos enlaces se ocultan.
 - Permite agregar listas M3U/M3U8 propias (URL o archivo local) desde **Agregar lista**.

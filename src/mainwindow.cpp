@@ -204,7 +204,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Nothing from iptv-org ships with the app: the catalogue is downloaded on
     // first start and refreshed on every later one.
-    refreshCatalog(false);
+    if (sourceEnabled(Catalog::kSourceId))
+        refreshCatalog(false);
+}
+
+bool MainWindow::sourceEnabled(const char *id) const
+{
+    return !m_settings.value(QStringLiteral("disabledSources")).toStringList().contains(QLatin1String(id));
 }
 
 void MainWindow::buildUi()
@@ -480,7 +486,9 @@ void MainWindow::rebuildTree()
     else
         delete others;
 
-    if (m_catalog.isEmpty()) {
+    if (!sourceEnabled(Catalog::kSourceId)) {
+        // iptv-org switched off in Settings: show none of it.
+    } else if (m_catalog.isEmpty()) {
         QStandardItem *pending = makeItem(m_catalogFailed ? QStringLiteral("Catálogo de iptv-org no disponible")
                                                           : QStringLiteral("Descargando catálogo de iptv-org…"));
         pending->setEnabled(false);
@@ -489,6 +497,8 @@ void MainWindow::rebuildTree()
         root->appendRow(makeItem(QStringLiteral("Todos los canales (iptv-org)"), QString::fromLatin1(Catalog::kMainIndexUrl)));
     }
     for (const CatalogNode &group : std::as_const(m_catalog)) {
+        if (!sourceEnabled(Catalog::kSourceId))
+            break;
         QStandardItem *item = makeItem(groupTitle(group.title));
         item->setIcon(QIcon::fromTheme(QStringLiteral("folder")));
         root->appendRow(item);
@@ -534,10 +544,22 @@ void MainWindow::selectDefaultList()
     // Start with the channels of the user's country when iptv-org has them.
     const QString territory = QLocale::territoryToCode(QLocale::system().territory()).toLower();
     const QString countryUrl = QStringLiteral("https://iptv-org.github.io/iptv/countries/%1.m3u").arg(territory);
-    if (!territory.isEmpty() && findListItem(countryUrl))
+    if (!territory.isEmpty() && findListItem(countryUrl)) {
         selectList(countryUrl);
-    else
+        return;
+    }
+    if (findListItem(QString::fromLatin1(Catalog::kMainIndexUrl))) {
         selectList(QString::fromLatin1(Catalog::kMainIndexUrl));
+        return;
+    }
+    // iptv-org is off: fall back to another source, then to favourites.
+    for (const ExtraSource &source : ExtraSources::all()) {
+        if (findListItem(QString::fromLatin1(source.url))) {
+            selectList(QString::fromLatin1(source.url));
+            return;
+        }
+    }
+    selectList(kFavoritesUrl);
 }
 
 void MainWindow::showTreeMenu(const QPoint &pos)
@@ -890,6 +912,9 @@ void MainWindow::openSettings()
     });
     connect(&dialog, &SettingsDialog::disabledSourcesChanged, this, [this](const QStringList &disabled) {
         m_settings.setValue(QStringLiteral("disabledSources"), disabled);
+        // Turned iptv-org back on without a cached copy: fetch it now.
+        if (sourceEnabled(Catalog::kSourceId) && m_catalog.isEmpty())
+            refreshCatalog(false);
         const QString current = m_currentList;
         rebuildTree();
         if (findListItem(current)) {

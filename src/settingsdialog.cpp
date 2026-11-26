@@ -1,5 +1,6 @@
 #include "settingsdialog.h"
 
+#include "catalog.h"
 #include "extrasources.h"
 
 #include <DSwitchButton>
@@ -88,28 +89,44 @@ SettingsDialog::SettingsDialog(const Values &values, QWidget *parent)
     // --- Playlists -------------------------------------------------------
     layout->addWidget(sectionTitle(QStringLiteral("Listas"), content));
 
-    auto *catalogButton = new QPushButton(QStringLiteral("Actualizar ahora"), content);
-    layout->addLayout(row(QStringLiteral("Catálogo de iptv-org"), catalogButton, content));
-    m_catalogStatus = hint(QStringLiteral("Se actualiza solo cada vez que se abre la aplicación."), content);
-    layout->addWidget(m_catalogStatus);
-
-    layout->addWidget(new QLabel(QStringLiteral("Otras fuentes gratuitas"), content));
-    for (const ExtraSource &source : ExtraSources::all()) {
-        const QString id = QString::fromLatin1(source.id);
+    // Every source is optional, iptv-org included.
+    layout->addWidget(new QLabel(QStringLiteral("Fuentes de canales"), content));
+    const auto addSource = [&](const QString &id, const QString &title, const QString &description,
+                               QWidget *extra) {
         auto *sourceSwitch = new DSwitchButton(content);
         sourceSwitch->setChecked(!m_disabledSources.contains(id));
-        sourceSwitch->setToolTip(QString::fromUtf8(source.description));
-        auto *sourceRow = row(QString::fromUtf8(source.title), sourceSwitch, content);
+        sourceSwitch->setToolTip(description);
+        auto *sourceRow = new QHBoxLayout;
         sourceRow->setContentsMargins(12, 0, 0, 0);
+        auto *label = new QLabel(title, content);
+        label->setToolTip(description);
+        sourceRow->addWidget(label, 1);
+        if (extra)
+            sourceRow->addWidget(extra);
+        sourceRow->addWidget(sourceSwitch);
         layout->addLayout(sourceRow);
-        connect(sourceSwitch, &DSwitchButton::checkedChanged, this, [this, id](bool on) {
+        connect(sourceSwitch, &DSwitchButton::checkedChanged, this, [this, id, extra](bool on) {
             if (on)
                 m_disabledSources.removeAll(id);
             else if (!m_disabledSources.contains(id))
                 m_disabledSources.append(id);
+            if (extra)
+                extra->setEnabled(on);
             emit disabledSourcesChanged(m_disabledSources);
         });
-    }
+    };
+
+    auto *catalogButton = new QPushButton(QStringLiteral("Actualizar ahora"), content);
+    const QString catalogId = QString::fromLatin1(Catalog::kSourceId);
+    catalogButton->setEnabled(!m_disabledSources.contains(catalogId));
+    addSource(catalogId, QStringLiteral("iptv-org (países, idiomas y categorías)"),
+              QStringLiteral("El catálogo público de iptv-org. Se actualiza solo cada vez que se abre la aplicación."),
+              catalogButton);
+    for (const ExtraSource &source : ExtraSources::all())
+        addSource(QString::fromLatin1(source.id), QString::fromUtf8(source.title),
+                  QString::fromUtf8(source.description), nullptr);
+    m_catalogStatus = hint(QStringLiteral("Las fuentes desactivadas no se descargan ni aparecen en el panel."), content);
+    layout->addWidget(m_catalogStatus);
 
     layout->addWidget(new QLabel(QStringLiteral("Mis listas"), content));
     m_lists = new QListWidget(content);

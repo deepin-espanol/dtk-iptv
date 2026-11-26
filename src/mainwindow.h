@@ -48,6 +48,7 @@ private:
     void rebuildTree();
     void selectList(const QString &url);
     void selectDefaultList();
+    bool sourceEnabled(const char *id) const;
     QStandardItem *findListItem(const QString &url, QStandardItem *parent = nullptr) const;
 
     void loadCatalog();

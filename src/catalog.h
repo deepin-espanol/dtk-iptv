@@ -15,6 +15,8 @@ struct CatalogNode
 };
 
 namespace Catalog {
+// Id used to switch the catalogue off, like the other sources.
+inline const char *const kSourceId = "iptv-org";
 inline const char *const kSourceUrl = "https://raw.githubusercontent.com/iptv-org/iptv/master/PLAYLISTS.md";
 inline const char *const kMainIndexUrl = "https://iptv-org.github.io/iptv/index.m3u";
 
